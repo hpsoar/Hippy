@@ -20,7 +20,7 @@ export const Entry = () => (
       {
         ALL_ROUTES.map((item) => {
           const Comp = item.component;
-          return (
+          return Comp && (
             <Route key={item.path} exact path={`${item.path}`}>
               <View style={{ flex: 1 }}>
                <Header route={item} />
