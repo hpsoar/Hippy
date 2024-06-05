@@ -20,7 +20,7 @@ class SceneBuilder {
 
     nodes.forEach((n) => {
       const [node, ref] = n;
-      if (!ref.refId) {
+      if (!ref.refId || ref.relativeToRef >= 0) {
         return;
       }
 
