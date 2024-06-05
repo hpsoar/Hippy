@@ -62,11 +62,11 @@ export class Gallery extends Component {
     Object.keys(Type).forEach((key) => {
       typeVisibleState[Type[key]] = false;
     }),
-    this.state = {
-      pressItem: '',
-      dataSource: [...routes],
-      typeVisibleState,
-    };
+      this.state = {
+        pressItem: '',
+        dataSource: [...routes],
+        typeVisibleState,
+      };
     this.renderRow = this.renderRow.bind(this);
     this.getRowType = this.getRowType.bind(this);
     this.getRowKey = this.getRowKey.bind(this);
@@ -122,7 +122,10 @@ export class Gallery extends Component {
   }
 
   renderRow(index) {
-    const { dataSource, pressItem, typeVisibleState } = this.state;
+    const { pressItem, typeVisibleState } = this.state;
+
+    const dataSource = this.getVisibleItems();
+
     const rowData = dataSource[index];
     const { type } = rowData.meta;
     if (type === Type.TITLE) {
@@ -135,19 +138,20 @@ export class Gallery extends Component {
           borderBottomLeftRadius: 4,
           borderBottomRightRadius: 4,
         }]}
-        onClick={() => this.clickToggle(mapType)}>
+          onClick={() => this.clickToggle(mapType)}>
           <Text style={styles.typeText}>{rowData.name}</Text>
           <Image
-          style={[styles.arrowIcon, typeVisibleState[mapType] ? {
-            transform: [{
-              rotate: '-90deg',
-            }] } : {
-            transform: [{
-              rotate: '180deg',
-            }],
-          }]}
-          source={{ uri: BACK_ICON }}
-        />
+            style={[styles.arrowIcon, typeVisibleState[mapType] ? {
+              transform: [{
+                rotate: '-90deg',
+              }]
+            } : {
+              transform: [{
+                rotate: '180deg',
+              }],
+            }]}
+            source={{ uri: BACK_ICON }}
+          />
         </View>
       );
     }
@@ -158,29 +162,35 @@ export class Gallery extends Component {
       isLastItem = true;
     }
     return (
-     <View style={typeVisibleState[type] ? { display: 'flex' } : { display: 'none' }}>
-      <View
-        onPressIn={() => this.feedback(rowData.path)}
-        onPressOut={() => this.feedback()}
-        onClick={() => this.clickTo(rowData.path)}
-        style={[styles.buttonView, {
-          opacity: (pressItem === rowData.path ? 0.5 : 1),
-        },
-        ]}
-      >
-        <Text
-          style={styles.buttonText}
+      <View style={typeVisibleState[type] ? { display: 'flex' } : { display: 'none' }}>
+        <View
+          onPressIn={() => this.feedback(rowData.path)}
+          onPressOut={() => this.feedback()}
+          onClick={() => this.clickTo(rowData.path)}
+          style={[styles.buttonView, {
+            opacity: (pressItem === rowData.path ? 0.5 : 1),
+          },
+          ]}
         >
-          {rowData.name}
-        </Text>
+          <Text
+            style={styles.buttonText}
+          >
+            {rowData.name}
+          </Text>
+        </View>
+        {!isLastItem ? <View style={styles.separatorLine} /> : null}
       </View>
-      {!isLastItem ? <View style={styles.separatorLine} /> : null}
-     </View>
     );
   }
 
+  getVisibleItems() {
+    const { dataSource, typeVisibleState } = this.state;
+    return dataSource.filter((item) => item.meta.type === Type.TITLE || typeVisibleState[item.meta.type])
+  }
+
   render() {
-    const { dataSource } = this.state;
+    const dataSource = this.getVisibleItems();
+
     return (
       <ListView
         style={{ flex: 1 }}
