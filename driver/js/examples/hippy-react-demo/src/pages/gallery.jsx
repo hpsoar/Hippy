@@ -89,13 +89,14 @@ export class Gallery extends Component {
   }
 
   getRowType(index) {
-    const { dataSource } = this.state;
+    const dataSource = this.getVisibleItems();
     const item = dataSource[index];
     return item.meta.type;
   }
 
   getRowKey(index) {
-    const { dataSource } = this.state;
+    const dataSource = this.getVisibleItems();
+
     const item = dataSource[index];
     return item.path || `${index}`;
   }
